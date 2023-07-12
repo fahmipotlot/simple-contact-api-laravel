@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\v1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Contact;
+use App\Models\User;
 
 class ContactController extends Controller
 {
@@ -23,7 +24,7 @@ class ContactController extends Controller
                 ->where('user_id', $user->id)
                 ->get();
         } else {
-            $contact = Contact::where('user_id', $user->id)->get();
+            $contact = User::findOrfail($user->id)->contacts;
         }
 
         return $contact;
@@ -57,8 +58,8 @@ class ContactController extends Controller
      */
     public function show(string $id)
     {
-        $user = \Auth::user();
-        $contact = $user->contacts->where('id', $id)->first();
+        $user_id = \Auth::user()->id;
+        $contact = Contact::with('user')->where('id', $id)->where('user_id', $user_id)->first();
         if (!$contact) {
             return response()->json(['message' => 'data not found'], 404);
         }

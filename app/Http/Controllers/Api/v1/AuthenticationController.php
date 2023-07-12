@@ -65,10 +65,6 @@ class AuthenticationController extends Controller
             $user->token = $user->createToken('auth_token')->plainTextToken;;
 
             return $user;
-        } else {
-            return response()->json([
-                'message' => 'Email / Password doesn\'t match our record'
-            ], 401);
         }
     }
 
